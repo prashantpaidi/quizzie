@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const app = express();
 
+const authRoutes = require('./routes/auth');
+
 dotenv.config();
 app.use(
   cors({
@@ -25,8 +27,26 @@ app.get('/health', (req, res) => {
   res.status(200).send(data);
 });
 
+app.use('/users', authRoutes);
+
 app.get('/', (req, res) => {
   res.send('This is api for the Quizzie app');
+});
+
+app.use((req, res, next) => {
+  const err = new Error('Not found');
+  err.status = 404;
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.send({
+    error: {
+      status: err.status || 500,
+      message: err.message,
+    },
+  });
 });
 
 app.listen(process.env.PORT || 3000, () => {

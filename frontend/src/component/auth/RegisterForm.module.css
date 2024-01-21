@@ -1,0 +1,60 @@
+.input_wrapper {
+  display: flex;
+  align-items: center;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+.register_input {
+  border: 2px solid #c2c2c2;
+  outline: none;
+  padding: 0.3rem 2rem;
+  border-radius: 5px;
+  margin-top: 1rem;
+  width: 60%;
+  border-radius: 10px 10px 0px 0px;
+  /* border: 1px solid #d60000; */
+  padding: 10px;
+  background: #f4f4f4;
+  font-family: 'Poppins', sans-serif !important;
+}
+.register_container {
+  padding: 40px;
+  margin: auto;
+  width: 70%;
+}
+.label {
+  color: #474444;
+  font-family: Poppins;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.errorMsg {
+  color: rgb(206, 7, 7);
+  border: 1px solid #d60000;
+
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  margin: 0.2rem 0;
+}
+.register_btn {
+  border-radius: 8px;
+  background: #a9bcff;
+  width: 274px;
+  padding: 10px 0px;
+  margin: 50px auto;
+  /* remove black colour aroud btn */
+  outline: none;
+  border: none;
+  color: #474444;
+  font-family: Poppins;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.register_btn:hover {
+  background: #8ca6ff;
+  cursor: pointer;
+}
