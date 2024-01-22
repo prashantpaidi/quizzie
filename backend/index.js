@@ -6,6 +6,7 @@ const cors = require('cors');
 const app = express();
 
 const authRoutes = require('./routes/auth');
+const quizRoutes = require('./routes/quiz'); // Import the quiz routes
 
 dotenv.config();
 app.use(
@@ -28,6 +29,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/users', authRoutes);
+app.use('/quizzes', quizRoutes); // quiz routes
 
 app.get('/', (req, res) => {
   res.send('This is api for the Quizzie app');
