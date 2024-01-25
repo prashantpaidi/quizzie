@@ -48,6 +48,7 @@ export default function LoginForm() {
       localStorage.setItem('name', responseData.user.name);
       localStorage.setItem('email', responseData.user.email);
       localStorage.setItem('token', responseData.token);
+      localStorage.setItem('user', responseData.user.id);
       navigate('/');
     } catch (error) {
       console.log(error);

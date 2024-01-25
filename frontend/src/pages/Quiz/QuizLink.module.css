@@ -1,0 +1,70 @@
+.backGround {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.81);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.quizContainer {
+  background-color: white;
+  width: 45%;
+  /* height: auto; */
+  border-radius: 10px;
+  background: #fff;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+.heading {
+  font-family: Poppins;
+  font-size: 39px;
+  font-weight: 600;
+  text-align: center;
+  margin: 30px;
+}
+
+.input {
+  border-radius: 10px;
+  background: #ededed;
+  color: #474444;
+  font-family: Poppins;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  padding: 10px;
+  width: 70%;
+}
+
+.button {
+  border-radius: 10px;
+  background: #60b84b;
+  color: #fff;
+  font-family: Poppins;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  padding: 10px;
+  width: 40%;
+  margin: 40px;
+  padding: 10px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.closeButton {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  margin: 10px;
+  cursor: pointer;
+  transform: scale(2);
+}

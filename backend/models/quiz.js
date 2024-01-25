@@ -29,7 +29,7 @@ const quizSchema = new mongoose.Schema({
   },
   timer: {
     type: String,
-    enum: ['Off', '5 Sec', '10 Sec'],
+    enum: ['OFF', '5 Sec', '10 Sec'],
     required: true,
   },
   optionType: {

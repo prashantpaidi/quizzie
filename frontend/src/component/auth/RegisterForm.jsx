@@ -44,6 +44,7 @@ export default function RegisterForm() {
       console.log(responseData);
       localStorage.setItem('name', responseData.name);
       localStorage.setItem('email', responseData.email);
+      localStorage.setItem('user', responseData.id);
       localStorage.setItem('token', responseData.token);
       navigate('/');
     } catch (error) {

@@ -35,7 +35,9 @@ router.post('/register', async (req, res) => {
 
     const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET);
     console.log(token);
-    res.status(201).json({ token, email: email, name: newUser.name });
+    res
+      .status(201)
+      .json({ token, email: email, name: newUser.name, id: newUser._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });

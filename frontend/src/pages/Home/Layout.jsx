@@ -41,7 +41,7 @@ export default function Layout() {
             Analytics
           </Link>
           <Link
-            to='/createQuiz'
+            to='/add-quiz'
             className={`${style.activeBtn} ${
               location.pathname === '/create-quiz' ? style.activeScreen : ''
             }`}

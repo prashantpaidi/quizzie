@@ -113,4 +113,33 @@ router.post('/', isLoggedIn, async (req, res) => {
   }
 });
 
+// GET route to retrieve all quizzes of a user
+router.get('/user/:id', isLoggedIn, async (req, res) => {
+  try {
+    // Get the user ID from the logged-in user's session
+    const userId = req.params.id;
+
+    console.log('User ID:', userId);
+
+    // Retrieve all quizzes for the user
+    const userQuizzes = await Quiz.find({ creatorId: userId })
+      .populate({
+        path: 'questions',
+        model: 'Question',
+        populate: {
+          path: 'options',
+          model: 'Option',
+        },
+      })
+      .exec();
+
+    console.log('User Quizzes:', userQuizzes);
+
+    res.json({ quizzes: userQuizzes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;
