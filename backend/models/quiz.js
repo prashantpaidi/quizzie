@@ -37,6 +37,7 @@ const quizSchema = new mongoose.Schema({
     enum: ['Text', 'Image URL', 'Text & Image URL'],
     required: true,
   },
+  impressionCount: { type: Number, default: 0 },
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
   created_at: { type: Date, default: Date.now },
 });
@@ -45,7 +46,6 @@ const Quiz = mongoose.model('Quiz', quizSchema);
 
 const userResponseSchema = new mongoose.Schema({
   quizId: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   answers: [
     {
       questionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },

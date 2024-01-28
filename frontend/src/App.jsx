@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Layout from './pages/Home/Layout';
 import AddQuiz from './pages/Quiz/AddQuiz';
 import QuizLink from './pages/Quiz/QuizLink';
+import QuizResponse from './pages/Quiz/QuizResponse';
+import QuizResult from './pages/Quiz/QuizResult';
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
               <Route path='/show-quiz-link' element={<QuizLink />} />
             </Route>
           </Route>
-
+          <Route path='/quiz/:quizId' element={<QuizResponse />} />
+          <Route path='/quiz-result' element={<QuizResult />} />
+          <Route path='/404' element={<PageNotFound />} />
           <Route path='*' element={<PageNotFound />} />
         </Routes>
       </Router>

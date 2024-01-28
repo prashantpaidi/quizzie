@@ -184,8 +184,16 @@ export default function AddQuiz() {
       }
       console.log('formData', formData);
       // answer validation
-      if (formData.questions[i].correctOptionId === -1) {
+      if (
+        formData.quizType === 'Q & A' &&
+        formData.questions[i].correctOptionId === -1
+      ) {
         validationErrors.correctOptionId = 'Correct option is required';
+      } else if (formData.quizType === 'Poll Type') {
+        // remove correctOptionId from formData
+        // delete formData.questions[i].correctOptionId;
+        // null
+        formData.questions[i].correctOptionId = null;
       }
     }
 

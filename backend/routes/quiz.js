@@ -7,10 +7,25 @@ const { Quiz, UserResponse, Option, Question } = require('../models/quiz');
 
 router.get('/:quizId', async (req, res) => {
   try {
-    const quiz = await Quiz.findById(req.params.quizId).populate('questions');
+    const quiz = await Quiz.findById(req.params.quizId)
+      .populate({
+        path: 'questions',
+        model: 'Question',
+        populate: {
+          path: 'options',
+          model: 'Option',
+        },
+      })
+      .exec();
+
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
+
+    // Increase the impression count
+    quiz.impressionCount += 1;
+    await quiz.save();
+
     res.json(quiz);
   } catch (error) {
     console.error(error);
@@ -18,7 +33,7 @@ router.get('/:quizId', async (req, res) => {
   }
 });
 
-// add a new quiz
+// // add a new quiz
 router.post('/', isLoggedIn, async (req, res) => {
   try {
     const { title, questions, quizType, timer, optionType, creatorId } =
@@ -31,13 +46,14 @@ router.post('/', isLoggedIn, async (req, res) => {
       !Array.isArray(questions) ||
       questions.length === 0 ||
       !quizType ||
-      !timer ||
       !optionType ||
       !creatorId
     ) {
       return res.status(400).json({ error: 'Invalid request parameters' });
     }
-
+    if (quizType === 'Q & A' && !timer) {
+      return res.status(400).json({ error: 'Invalid request parameters' });
+    }
     // Create an array to store the new questions
     const newQuestions = [];
 
@@ -59,7 +75,11 @@ router.post('/', isLoggedIn, async (req, res) => {
       // Loop through each option in the question
       for (const [index, { text, image }] of options.entries()) {
         // Validate option data
-        if (!text || (optionType === 'Text & Image URL' && !image)) {
+        if (
+          (optionType === 'Text' && !text) ||
+          ((optionType === 'Text & Image URL' || optionType === 'Image URL') &&
+            !image)
+        ) {
           return res.status(400).json({ error: 'Invalid option data' });
         }
 
@@ -79,6 +99,10 @@ router.post('/', isLoggedIn, async (req, res) => {
         }
       }
 
+      if (quizType === 'Poll Type') {
+        correctOptionObjectId = null;
+        timer = 'OFF';
+      }
       // Create a new question with the options array
       const question = new Question({
         text,
@@ -142,4 +166,29 @@ router.get('/user/:id', isLoggedIn, async (req, res) => {
   }
 });
 
+//  Sumbit a quiz
+router.post('/submit', async (req, res) => {
+  try {
+    // Get the quiz data from the request body
+    const { quizId, userResponses } = req.body;
+
+    console.log('Quiz ID:', quizId);
+    console.log('User Responses:', userResponses);
+    // Create a new UserResponse document for the submitted quiz
+    const userResponse = new UserResponse({
+      quizId,
+      answers: userResponses,
+    });
+
+    // Save the user response
+    await userResponse.save();
+
+    res.json({ message: 'Quiz submitted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// exports
 module.exports = router;
