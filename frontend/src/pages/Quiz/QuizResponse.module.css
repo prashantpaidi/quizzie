@@ -57,7 +57,7 @@
   font-size: 35px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
+
   padding: 40px 40px;
   text-align: center;
   cursor: pointer;
@@ -126,7 +126,7 @@
   font-size: 30px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
+
   border-radius: 10px;
   background: #60b84b;
   padding: 10px 60px;
@@ -208,6 +208,6 @@
   }
   .nextButton {
     font-size: 20px;
-    padding:  5px 60px;
+    padding: 5px 60px;
   }
 }

@@ -1,0 +1,111 @@
+.mainContainer {
+  width: -webkit-fill-available;
+  background-color: #f5f5f5;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 20px;
+  padding: 20px;
+  margin: 0 30px;
+}
+
+.card {
+  width: 250px;
+  /* height: 100px; */
+  margin: 20px;
+  padding: 10px 25px;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.quizzesCount {
+  font-size: 30px;
+  font-weight: 600;
+  color: #ff5d01;
+}
+
+.quizzesCountNumber {
+  font-size: 60px;
+}
+.cardWrapper {
+  width: 225px;
+  margin: auto;
+}
+.questionsCount {
+  font-size: 30px;
+  font-weight: 600;
+  color: #60b84b;
+}
+
+.questionsCountNumber {
+  font-size: 60px;
+}
+
+.impressionsCount {
+  font-size: 30px;
+  font-weight: 600;
+  color: #5076ff;
+}
+
+.impressionsCountNumber {
+  font-size: 60px;
+}
+.tileTrendingQuiz {
+  color: #474444;
+  font-size: 35px;
+  font-weight: 600;
+}
+.trendingQuizContainer {
+  padding: 100px 120px;
+}
+
+.trendingQuizCardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 30px;
+}
+
+.trendingQuizCard {
+  width: 200px;
+  /* height: 100%;   */
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.quizTitleDateflex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quizTitleImpressionflex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* trendingQuiz */
+
+.trendingQuizTitle {
+  color: #474444;
+  font-size: 23px;
+  font-weight: 600;
+  flex: 1 1 0%;
+}
+.trendingQuizImpressionCount {
+  color: #ff5d01;
+  font-size: 15px;
+  font-weight: 600;
+}
+.quizCreatedAt {
+  color: #60b84b;
+  font-size: 13px;
+  font-weight: 600;
+}

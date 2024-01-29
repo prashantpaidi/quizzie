@@ -29,7 +29,6 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
 }
 .errorMsg {
   color: rgb(206, 7, 7);
@@ -53,7 +52,6 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
 }
 .login_btn:hover {
   background: #8ca6ff;

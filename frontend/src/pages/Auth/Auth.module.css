@@ -23,7 +23,7 @@ h2 {
   font-size: 80px;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
+
   text-align: center;
   margin-bottom: 10px;
 }
@@ -39,7 +39,7 @@ h2 {
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
+
   border-radius: 10px;
   background: #fff;
   border: none;

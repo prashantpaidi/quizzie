@@ -142,7 +142,6 @@ router.get('/user/:id', isLoggedIn, async (req, res) => {
   try {
     // Get the user ID from the logged-in user's session
     const userId = req.params.id;
-
     console.log('User ID:', userId);
 
     // Retrieve all quizzes for the user
@@ -159,7 +158,22 @@ router.get('/user/:id', isLoggedIn, async (req, res) => {
 
     console.log('User Quizzes:', userQuizzes);
 
-    res.json({ quizzes: userQuizzes });
+    // Calculate the count of all questions
+    let questionCount = 0;
+    let totalImpressions = 0;
+    userQuizzes.forEach((quiz) => {
+      questionCount += quiz.questions.length;
+      totalImpressions += quiz.impressionCount;
+    });
+
+    console.log('Question Count:', questionCount);
+    console.log('Total Impressions:', totalImpressions);
+
+    res.json({
+      quizzes: userQuizzes,
+      questionCount: questionCount,
+      impressions: totalImpressions,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });

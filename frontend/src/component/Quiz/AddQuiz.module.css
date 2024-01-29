@@ -35,7 +35,6 @@
   font-size: 25px;
   font-style: normal;
   font-weight: 500;
-  line-height: normal;
 }
 
 .quizInput {
@@ -54,7 +53,6 @@
   font-size: 25px;
   font-style: normal;
   font-weight: 500;
-  line-height: normal;
 }
 .quizButton {
   /* CSS properties */
@@ -69,7 +67,7 @@
   font-size: 20 px;
   font-style: normal;
   font-weight: 600;
-  line-height: normal;
+
   color: #9f9f9f;
 
   text-align: center;
@@ -240,4 +238,3 @@
 .submitButtonContainer {
   margin: 20px 0px;
 }
-
