@@ -1,22 +1,16 @@
 import { useEffect, useState } from 'react';
 import styles from './AddQuiz.module.css'; // Import the module style class
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import QuizTitleAndType from '../../component/Quiz/QuizTitleAndType';
 import AddQuestions from '../../component/Quiz/AddQuestions';
 
 export default function AddQuiz() {
   let navigate = useNavigate();
+  const { state } = useLocation();
+  const [edit, setEdit] = useState(false);
+  const [id, setId] = useState(null);
+
   const [errors, setErrors] = useState({});
-
-  // login
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-
-    if (!token || !user) {
-      navigate('/auth/login');
-    }
-  }, []);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -35,6 +29,55 @@ export default function AddQuiz() {
     optionType: 'Text',
     creatorId: '',
   });
+
+  // login
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if (!token || !user) {
+      navigate('/auth/login');
+    }
+    const { id, edit } = state || {};
+    console.log(edit);
+    if (edit) {
+      setEdit(edit);
+    }
+
+    if (id) {
+      setId(id);
+      // load quiz data for edit
+      const getQuiz = async () => {
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_APP_API_URL}/quizzes/${id}`
+          );
+          const data = await response.json();
+
+          if (data.error) {
+            alert(data.error);
+          }
+          // correctOptionId to array index
+          data.questions.forEach((question) => {
+            question.options.forEach((option, index) => {
+              if (option._id === question.correctOptionId) {
+                question.correctOptionId = index;
+              }
+            });
+          });
+
+          setFormData(data);
+          console.log('Quiz:data', data);
+          console.log('Quiz:quiz', formData);
+        } catch (error) {
+          console.error(error);
+          console.log('404');
+          navigate('/404');
+        }
+      };
+      getQuiz();
+    }
+  }, []);
+
   const [currentPage, setCurrentPage] = useState(-1);
 
   const handleChange = (event, questionIndex, optionIndex) => {
@@ -139,10 +182,10 @@ export default function AddQuiz() {
       questions: updatedQuestions,
     });
   };
-  const handleSubmit = async () => {
-    console.log('Submit:', formData);
-    let validationErrors = {};
+
+  const validateFormData = () => {
     setErrors({});
+    let validationErrors = {};
 
     // validation quiz questions all question text should be filled
     for (let i = 0; i < formData.questions.length; i++) {
@@ -175,8 +218,8 @@ export default function AddQuiz() {
           formData.optionType === 'Text & Image URL'
         ) {
           if (
-            !formData.questions[i].options[j].text ||
-            formData.questions[i].options[j].text === ''
+            !formData.questions[i].options[j].image ||
+            formData.questions[i].options[j].image === ''
           ) {
             validationErrors.optionImage = 'Option Image URL is required';
           }
@@ -199,8 +242,14 @@ export default function AddQuiz() {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return;
+      return true;
     }
+  };
+
+  const handleSubmit = async () => {
+    if (validateFormData()) return;
+
+    // format formData
 
     formData.creatorId = localStorage.getItem('user');
     try {
@@ -231,6 +280,38 @@ export default function AddQuiz() {
     }
   };
 
+  const handleEditSubmit = async () => {
+    if (validateFormData()) return;
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_API_URL}/quizzes/${id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.error) {
+          alert(data.error);
+        }
+        console.log('Quiz edited successfully:', data);
+        navigate('/');
+      } else {
+        console.error('Failed to edit quiz:', response.statusText);
+        alert('Failed to edit quiz');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to edit quiz');
+    }
+  };
+
   return (
     <div className={styles.backGround}>
       <div className={styles.quizContainer}>
@@ -254,6 +335,9 @@ export default function AddQuiz() {
             handleDeleteQuestion={handleDeleteQuestion}
             handleAddOption={handleAddOption}
             errors={errors}
+            edit={edit}
+            handleEditSubmit={handleEditSubmit}
+            id={id}
           />
         )}
       </div>

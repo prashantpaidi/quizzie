@@ -10,6 +10,7 @@ import AddQuiz from './pages/Quiz/AddQuiz';
 import QuizLink from './pages/Quiz/QuizLink';
 import QuizResponse from './pages/Quiz/QuizResponse';
 import QuizResult from './pages/Quiz/QuizResult';
+import Analytics from './pages/Analytics/Analytics';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
             <Route path='/auth/login' element={<LoginForm />} />
           </Route>
           <Route path='/' element={<Layout />}>
-            {/* <Route path='/' element={<Dashboard />} /> */}
+            <Route path='/analytics' element={<Analytics />} />
             <Route path='/' element={<Dashboard />}>
               <Route path='/add-quiz' element={<AddQuiz />} />
               <Route path='/show-quiz-link' element={<QuizLink />} />

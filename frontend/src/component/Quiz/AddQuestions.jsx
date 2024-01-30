@@ -12,6 +12,8 @@ const AddQuestions = ({
   handleDeleteQuestion,
   handleAddOption,
   errors,
+  edit,
+  handleEditSubmit,
 }) => {
   return (
     <>
@@ -212,10 +214,10 @@ const AddQuestions = ({
               <button
                 id='timer'
                 name='timer'
-                value='5sec'
+                value='5 Sec'
                 onClick={(e) => handleChange(e)}
                 className={`${styles.timerButton} ${
-                  formData.timer === '5sec' ? styles.timerButtonActive : ''
+                  formData.timer === '5 Sec' ? styles.timerButtonActive : ''
                 }`}
               >
                 5 sec
@@ -223,10 +225,10 @@ const AddQuestions = ({
               <button
                 id='timer'
                 name='timer'
-                value='10sec'
+                value='10 sec'
                 onClick={(e) => handleChange(e)}
                 className={`${styles.timerButton} ${
-                  formData.timer === '10sec' ? styles.timerButtonActive : ''
+                  formData.timer === '10 Sec' ? styles.timerButtonActive : ''
                 }`}
               >
                 10 sec
@@ -252,13 +254,24 @@ const AddQuestions = ({
         >
           Cancel
         </button>
-        <button
-          key='MoveToQuestionPage'
-          onClick={() => handleSubmit()}
-          className={`${styles.quizButton} ${styles.mainButton} ${styles.mainButtonActive}`}
-        >
-          Create Quiz
-        </button>
+
+        {!edit ? (
+          <button
+            key='MoveToQuestionPage'
+            onClick={() => handleSubmit()}
+            className={`${styles.quizButton} ${styles.mainButton} ${styles.mainButtonActive}`}
+          >
+            Create Quiz
+          </button>
+        ) : (
+          <button
+            key='DeleteQuestion'
+            onClick={() => handleEditSubmit()}
+            className={`${styles.quizButton} ${styles.mainButton}`}
+          >
+            Edit
+          </button>
+        )}
       </div>
     </>
   );
@@ -294,6 +307,7 @@ AddQuestions.propTypes = {
   errors: PropTypes.shape({
     correctOptionId: PropTypes.string,
   }).isRequired,
+  edit: PropTypes.bool.isRequired,
+  handleEditSubmit: PropTypes.func.isRequired,
 };
-
 export default AddQuestions;

@@ -33,7 +33,7 @@ router.get('/:quizId', async (req, res) => {
   }
 });
 
-// // add a new quiz
+//  add a new quiz
 router.post('/', isLoggedIn, async (req, res) => {
   try {
     const { title, questions, quizType, timer, optionType, creatorId } =
@@ -203,6 +203,134 @@ router.post('/submit', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// Delete a quiz
+router.delete('/:quizId', isLoggedIn, async (req, res) => {
+  try {
+    // Get the quiz ID from the request
+    const quizId = req.params.quizId;
+
+    // Delete the quiz
+    await Quiz.findByIdAndDelete(quizId).exec();
+
+    res.json({ message: 'Quiz deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Edit quiz
+router.put('/:quizId', isLoggedIn, async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const { title, questions, quizType, timer, optionType, creatorId } =
+      req.body;
+
+    // Validate request parameters
+    if (
+      !title ||
+      !questions ||
+      !Array.isArray(questions) ||
+      questions.length === 0 ||
+      !quizType ||
+      !optionType ||
+      !creatorId
+    ) {
+      return res.status(400).json({ error: 'Invalid request parameters' });
+    }
+
+    const updatedOptions = [];
+    const updatedQuestions = [];
+
+    for (const { text, options, correctOptionId, _id } of questions) {
+      // Validate question data
+      if (
+        !text ||
+        !options ||
+        !Array.isArray(options) ||
+        options.length === 0
+      ) {
+        return res.status(400).json({ error: 'Invalid question data' });
+      }
+
+      const newOptions = [];
+      let correctOptionObjectId = '';
+
+      for (const [index, { text, image, _id }] of options.entries()) {
+        // Validate option data
+        if (
+          (optionType === 'Text' && !text) ||
+          ((optionType === 'Text & Image URL' || optionType === 'Image URL') &&
+            !image)
+        ) {
+          return res.status(400).json({ error: 'Invalid option data' });
+        }
+
+        const option = _id
+          ? await Option.findById(_id).exec()
+          : new Option({ text, image });
+
+        if (optionType === 'Text' || optionType === 'Text & Image URL')
+          option.text = text;
+        else if (
+          optionType === 'Image URL' ||
+          optionType === 'Text & Image URL'
+        )
+          option.image = image;
+
+        console.log('Option:', option);
+        await option.save();
+        newOptions.push(option._id);
+        console.log('New Options:', newOptions);
+        if (index === correctOptionId) {
+          correctOptionObjectId = option._id;
+        }
+      }
+
+      // save question
+      const question = _id
+        ? await Question.findByIdAndUpdate(_id, {
+            text,
+            options: newOptions,
+            correctOptionId: correctOptionObjectId,
+          }).exec()
+        : new Question({
+            text,
+            options: newOptions,
+            correctOptionId: correctOptionObjectId,
+          });
+
+      await question.save();
+
+      // console.log('Question:', question);
+      updatedQuestions.push(question._id);
+      // console.log('Updated Questions:', updatedQuestions);
+    }
+
+    // console.log('Updated Options:', updatedOptions);
+
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      quizId,
+      {
+        title,
+        quizType,
+        timer,
+        optionType,
+        questions: updatedQuestions,
+        creatorId,
+      },
+      { new: true }
+    ).exec();
+
+    console.log('Updated Quiz:', updatedQuiz);
+    res.json(updatedQuiz);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // exports
 module.exports = router;
