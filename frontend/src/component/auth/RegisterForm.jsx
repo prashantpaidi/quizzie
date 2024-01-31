@@ -78,11 +78,11 @@ export default function RegisterForm() {
 
       const responseData = await response.json();
       console.log(responseData);
-      localStorage.setItem('name', responseData.name);
-      localStorage.setItem('email', responseData.email);
-      localStorage.setItem('user', responseData.id);
-      localStorage.setItem('token', responseData.token);
-      navigate('/');
+      // localStorage.setItem('name', responseData.name);
+      // localStorage.setItem('email', responseData.email);
+      // localStorage.setItem('user', responseData.id);
+      // localStorage.setItem('token', responseData.token);
+      navigate('/auth/login');
     } catch (error) {
       console.log(error);
       alert(error);
