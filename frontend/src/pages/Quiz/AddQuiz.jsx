@@ -135,6 +135,7 @@ export default function AddQuiz() {
       ...formData,
       questions: updatedQuestions,
     });
+    setCurrentPage(currentPage - 1);
   };
 
   const handleAddQuestion = () => {
@@ -152,6 +153,7 @@ export default function AddQuiz() {
         },
       ],
     });
+    setCurrentPage(formData.questions.length);
   };
 
   const handleGotoAddQuestion = () => {

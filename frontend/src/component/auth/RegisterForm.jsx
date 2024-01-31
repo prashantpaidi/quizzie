@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './RegisterForm.module.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,39 @@ export default function RegisterForm() {
     }));
   }
 
+  function validate() {
+    const { name, email, password, confirmPassword } = registerData;
+    const errors = {};
+    if (!name) {
+      errors.invalidName = true;
+    }
+    if (!email || !email.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/)) {
+      errors.invalidEmail = true;
+    }
+    // password number and special character validation
+    if (!password || password.length < 6) {
+      errors.invalidPassword = 'Please enter your password';
+    }
+    if (!confirmPassword) {
+      errors.invalidConfirmPassword = 'Please confirm your password';
+    }
+    if (password !== confirmPassword) {
+      errors.passwordMismatch = 'Passwords do not match';
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      ...errors,
+    }));
+    return Object.keys(errors).length === 0;
+  }
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
+
   async function handleSubmit() {
+    // handle validation
+    if (!validate()) return;
     try {
       const response = await fetch(
         `${import.meta.env.VITE_APP_API_URL}/users/register`,
@@ -36,6 +68,10 @@ export default function RegisterForm() {
         }
       );
 
+      console.log(response);
+      if (response.status === 400) {
+        throw new Error('Email is already registered');
+      }
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -49,6 +85,7 @@ export default function RegisterForm() {
       navigate('/');
     } catch (error) {
       console.log(error);
+      alert(error);
       setErrors((prevErrors) => ({
         ...prevErrors,
         serverErr: true,
@@ -67,14 +104,14 @@ export default function RegisterForm() {
         </label>
         <input
           type='text'
-          placeholder='Name'
+          placeholder={errors.invalidName ? 'Invalid name' : 'Enter your name'}
           className={`${styles.register_input} ${
             errors.serverErr ? styles.errorMsg : ''
-          }`}
+          }${errors.invalidName ? styles.errorMsg : ''}`}
           name='name'
           onChange={(e) => handleChange(e)}
           value={registerData.name}
-        ></input>
+        />
       </div>
       <div className={styles.input_wrapper}>
         <label
@@ -85,16 +122,19 @@ export default function RegisterForm() {
           Email
         </label>
         <input
-          type='email'
-          placeholder='Email'
+          type='text'
+          placeholder={
+            errors.invalidName ? 'Invalid Email' : 'Enter your Email'
+          }
           className={`${styles.register_input} ${
             errors.serverErr ? styles.errorMsg : ''
-          }`}
+          }${errors.invalidEmail ? styles.errorMsg : ''}`}
           name='email'
           onChange={(e) => handleChange(e)}
           value={registerData.email}
-        ></input>
+        />
       </div>
+
       <div className={styles.input_wrapper}>
         <label
           htmlFor='password'
@@ -105,15 +145,14 @@ export default function RegisterForm() {
         </label>
         <input
           type='password'
-          placeholder='Password'
+          placeholder={errors.invalidName ? 'Invalid name' : 'Enter your name'}
           className={`${styles.register_input} ${
             errors.serverErr ? styles.errorMsg : ''
-          }`}
+          }${errors.invalidPassword ? styles.errorMsg : ''}`}
           name='password'
           onChange={(e) => handleChange(e)}
           value={registerData.password}
-          style={{ marginTop: '0.7rem' }}
-        ></input>
+        />
       </div>
       <div className={styles.input_wrapper}>
         <label
@@ -125,16 +164,16 @@ export default function RegisterForm() {
         </label>
         <input
           type='password'
-          placeholder='Confirm Password'
+          placeholder={errors.invalidName ? 'Invalid name' : 'Enter your name'}
           className={`${styles.register_input} ${
             errors.serverErr ? styles.errorMsg : ''
-          }`}
+          }${errors.passwordMismatch ? styles.errorMsg : ''}`}
           name='confirmPassword'
           onChange={(e) => handleChange(e)}
           value={registerData.confirmPassword}
-          style={{ marginTop: '0.7rem' }}
-        ></input>
+        />
       </div>
+
       <button className={styles.register_btn} onClick={() => handleSubmit()}>
         Sign up
       </button>

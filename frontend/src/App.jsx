@@ -11,6 +11,7 @@ import QuizLink from './pages/Quiz/QuizLink';
 import QuizResponse from './pages/Quiz/QuizResponse';
 import QuizResult from './pages/Quiz/QuizResult';
 import Analytics from './pages/Analytics/Analytics';
+import QuestionAnalysis from './pages/Analytics/QuestionAnalysis';
 
 function App() {
   return (
@@ -23,6 +24,10 @@ function App() {
           </Route>
           <Route path='/' element={<Layout />}>
             <Route path='/analytics' element={<Analytics />} />
+            <Route
+              path='/quiz/analytics/:quizId'
+              element={<QuestionAnalysis />}
+            />
             <Route path='/' element={<Dashboard />}>
               <Route path='/add-quiz' element={<AddQuiz />} />
               <Route path='/show-quiz-link' element={<QuizLink />} />

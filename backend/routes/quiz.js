@@ -154,6 +154,7 @@ router.get('/user/:id', isLoggedIn, async (req, res) => {
           model: 'Option',
         },
       })
+      .sort({ impressionCount: -1 }) 
       .exec();
 
     console.log('User Quizzes:', userQuizzes);
@@ -331,6 +332,96 @@ router.put('/:quizId', isLoggedIn, async (req, res) => {
   }
 });
 
+router.get('/analytics/:quizId', async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+
+    // Retrieve the quiz from the database
+    const quiz = await Quiz.findById(quizId).populate('questions');
+    if (!quiz) {
+      return res.status(404).json({ error: 'Quiz not found' });
+    }
+
+    const userResponses = await UserResponse.find({ quizId });
+
+    // Perform analytics calculations
+    let questionsAnalytics = [];
+
+    quiz.questions.forEach((question) => {
+      if (quiz.quizType === 'Q & A') {
+        const correctOptionId = question.correctOptionId.toString();
+        const questionId = question._id;
+
+        // Calculate the number of correct responses
+        let totalRight = 0;
+        let totalWrong = 0;
+        userResponses.forEach((userResponse) => {
+          userResponse.answers.forEach((answer) => {
+            if (answer.questionId.toString() === questionId.toString()) {
+              if (answer.selectedOptionId.toString() === correctOptionId) {
+                totalRight += 1;
+              } else {
+                totalWrong += 1;
+              }
+            }
+          });
+        });
+
+        // Store question-wise analytics
+        questionsAnalytics.push({
+          questionId: questionId,
+          text: question.text,
+          totalRight: totalRight,
+          totalWrong: totalWrong,
+          totalResponses: totalRight + totalWrong,
+        });
+      } else {
+        // Calculate the number of responses for each option
+
+        let optionAnalytics = [];
+        question.options.forEach((option) => {
+          const optionId = option._id.toString();
+          let totalResponses = 0;
+          userResponses.forEach((userResponse) => {
+            userResponse.answers.forEach((answer) => {
+              if (answer.questionId.toString() === question._id.toString()) {
+                if (answer.selectedOptionId.toString() === optionId) {
+                  totalResponses += 1;
+                }
+              }
+            });
+          });
+          optionAnalytics.push({
+            optionId: optionId,
+            text: option.text,
+            image: option.image,
+            totalResponses: totalResponses,
+          });
+        });
+
+        // Store question-wise analytics
+        questionsAnalytics.push({
+          questionId: question._id,
+          text: question.text,
+          options: optionAnalytics,
+        });
+      }
+    });
+
+    res.status(200).json({
+      analytics: {
+        questions: questionsAnalytics,
+        createdOn: quiz.created_at,
+        impressionCount: quiz.impressionCount,
+        quizType: quiz.quizType,
+        title: quiz.title,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve quiz analytics' });
+  }
+});
 
 // exports
 module.exports = router;

@@ -35,12 +35,12 @@ export default function Dashboard() {
         console.log('Quiz:quiz', quizData);
 
         if (data.error) {
-          navigate('/404');
+          alert(data.error);
         }
       } catch (error) {
         console.error(error);
         console.log('404');
-        navigate('/404');
+        alert(error);
       }
     };
     getQuiz();

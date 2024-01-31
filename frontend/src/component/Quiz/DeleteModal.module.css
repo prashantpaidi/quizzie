@@ -1,0 +1,42 @@
+.backGround {
+  background: rgba(0, 0, 0, 0.81);
+  /* modal */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+}
+.quizContainer {
+  border-radius: 10px;
+  background: #fff;
+  width: 700px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.title {
+  color: #474444;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 39px;
+  font-weight: 600;
+  margin: 20px 130px 60px 130px;
+}
+.btnContainer {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 50px;
+}
+
+.btn {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.25);
+  padding: 5px 65px;
+  border: none;
+  cursor: pointer;
+}

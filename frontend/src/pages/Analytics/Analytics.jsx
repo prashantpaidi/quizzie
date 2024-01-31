@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Analytics.module.css';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -6,10 +6,14 @@ import toast, { Toaster } from 'react-hot-toast';
 import deleteIcon from '../../assets/deleteIcon.svg';
 import editIcon from '../../assets/editIcon.svg';
 import shareIcon from '../../assets/shareIcon.svg';
+import DeleteModal from '../../component/Quiz/DeleteModal';
 
 export default function Analytics() {
   const navigate = useNavigate();
   const [quizData, setQuizData] = useState([]);
+  // delete modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [quizToDelete, setQuizToDelete] = useState(null);
 
   useEffect(() => {
     // get user id from local storage if no user id then redirect to login page
@@ -35,12 +39,12 @@ export default function Analytics() {
         console.log('Quiz:quiz', quizData);
 
         if (data.error) {
-          navigate('/404');
+          alert('Something went wrong');
         }
       } catch (error) {
         console.error(error);
         console.log('404');
-        navigate('/404');
+        alert('Something went wrong');
       }
     };
     getQuiz();
@@ -56,6 +60,15 @@ export default function Analytics() {
   };
 
   const handleDeleteClick = async (quizId) => {
+    setQuizToDelete(quizId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setShowDeleteModal(false);
+    const quizId = quizToDelete;
+
+    if (!quizId) return console.log('No quiz id');
     const userId = localStorage.getItem('user');
     const token = localStorage.getItem('token');
 
@@ -81,7 +94,11 @@ export default function Analytics() {
         const newQuizData = quizData.filter((quiz) => quiz._id !== quizId);
         setQuizData(newQuizData);
       }
+
+      setQuizToDelete(null);
+      setShowDeleteModal(false);
     } catch (error) {
+      alert('Something went wrong');
       console.error(error);
     }
   };
@@ -141,12 +158,26 @@ export default function Analytics() {
                     onClick={() => handleShareClick(quiz._id)}
                   />
                 </td>
-                <td>Question Wise Analysis</td>
+                <td>
+                  <Link
+                    to={`${import.meta.env.VITE_APP_WEB_URL}/quiz/analytics/${
+                      quiz._id
+                    }`}
+                  >
+                    Question Wise Analysis
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {showDeleteModal ? (
+        <DeleteModal
+          handleDeleteConfirm={handleDeleteConfirm}
+          setShowDeleteModal={setShowDeleteModal}
+        />
+      ) : null}
       <Toaster position='top-right' />
     </div>
   );

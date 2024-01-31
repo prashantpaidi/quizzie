@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import styles from './LoginForm.module.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -78,7 +78,7 @@ export default function LoginForm() {
             name='email'
             onChange={(e) => handleChange(e)}
             value={loginData.email}
-          ></input>
+          />
         </div>
         <div className={styles.input_wrapper}>
           <label
@@ -98,11 +98,14 @@ export default function LoginForm() {
             onChange={(e) => handleChange(e)}
             value={loginData.password}
             style={{ marginTop: '0.7rem' }}
-          ></input>
+          />
         </div>
         <button className={styles.login_btn} onClick={() => handleSubmit()}>
           Sign in
         </button>
+        {errors.serverErr && (
+          <p className={styles.errorMsg}>Invalid email or password</p>
+        )}
       </div>
     </>
   );

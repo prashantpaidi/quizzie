@@ -5,6 +5,7 @@ import { useState } from 'react';
 export default function Layout() {
   let location = useLocation();
 
+  console.log('location.pathname', location.pathname);
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem('token') !== null
   );
@@ -35,7 +36,7 @@ export default function Layout() {
           <Link
             to='/analytics'
             className={`${style.activeBtn} ${
-              location.pathname === '/analytics' ? style.activeScreen : ''
+              location.pathname.includes('/analytics') ? style.activeScreen : ''
             }`}
           >
             Analytics

@@ -16,6 +16,7 @@
   padding: 10px;
   background: #f4f4f4;
   font-family: 'Poppins', sans-serif !important;
+  margin-top: 0.7rem;
 }
 .register_container {
   padding: 40px;
@@ -35,7 +36,10 @@
 
   font-size: 14px;
   font-family: 'DM Sans', sans-serif;
-  margin: 0.2rem 0;
+  margin-top: 0.7rem;
+}
+.errorMsg::placeholder {
+  color: rgb(206, 7, 7);
 }
 .register_btn {
   border-radius: 8px;
