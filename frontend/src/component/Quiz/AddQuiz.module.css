@@ -55,7 +55,6 @@
   font-weight: 500;
 }
 .quizButton {
-  /* CSS properties */
   border-radius: 10px;
   background: #fff;
 
@@ -79,25 +78,31 @@
 .mainButton {
   padding: 10px 60px;
 }
+.optionWarpper {
+  display: flex;
+  align-items: center;
+}
 .mainButtonActive {
   background: #60b84b;
   color: #fff;
 }
 .questionContainer {
-  /* CSS properties */
   width: 70%;
 }
-
+.activeInput {
+  background: #60b84b !important;
+  color: #fff !important;
+}
+.activeInput::placeholder {
+  color: #fff !important;
+}
 .questionTitle {
-  /* CSS properties */
 }
 
 .questionLabel {
-  /* CSS properties */
 }
 
 .questionInput {
-  /* CSS properties */
   border-radius: 10px;
   background: #fff;
   padding: 10px;
@@ -106,13 +111,11 @@
 }
 
 .optionContainer {
-  /* CSS properties */
   /* display: flex;
   flex-direction: column; */
 }
 
 .optionLabel {
-  /* CSS properties */
 }
 
 .optionInput {
@@ -207,7 +210,6 @@
 }
 
 .deleteButton {
-  /* absolute */
   position: absolute;
   top: 0;
   right: 5px;
@@ -225,16 +227,11 @@
 }
 .optionRadioButton {
   /* add style to selected option */
-  /* background: #60b84b;
-  color: #fff; */
-  /* color of dot */
-  accent-color: rgb(0, 255, 0);
+  background: #60b84b;
+  color: #fff;
+  accent-color: #60b84b;
 }
 
-.optionRadioButton:checked {
-  /* background-color: #60b84b; */
-  /* color: #fff; */
-}
 .submitButtonContainer {
   margin: 20px 0px;
 }

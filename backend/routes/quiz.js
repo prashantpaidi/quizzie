@@ -154,7 +154,7 @@ router.get('/user/:id', isLoggedIn, async (req, res) => {
           model: 'Option',
         },
       })
-      .sort({ impressionCount: -1 }) 
+      .sort({ impressionCount: -1 })
       .exec();
 
     console.log('User Quizzes:', userQuizzes);
@@ -332,7 +332,7 @@ router.put('/:quizId', isLoggedIn, async (req, res) => {
   }
 });
 
-router.get('/analytics/:quizId', async (req, res) => {
+router.get('/analytics/:quizId', isLoggedIn, async (req, res) => {
   try {
     const quizId = req.params.quizId;
 

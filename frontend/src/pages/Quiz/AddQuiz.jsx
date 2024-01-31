@@ -71,7 +71,7 @@ export default function AddQuiz() {
         } catch (error) {
           console.error(error);
           console.log('404');
-          navigate('/404');
+          alert('Quiz not found');
         }
       };
       getQuiz();
@@ -179,6 +179,16 @@ export default function AddQuiz() {
   const handleAddOption = (questionIndex) => {
     const updatedQuestions = [...formData.questions];
     updatedQuestions[questionIndex].options.push({ text: '', image: '' });
+    setFormData({
+      ...formData,
+      questions: updatedQuestions,
+    });
+  };
+
+  // handle delete option
+  const handleDeleteOption = (questionIndex, optionIndex) => {
+    const updatedQuestions = [...formData.questions];
+    updatedQuestions[questionIndex].options.splice(optionIndex, 1);
     setFormData({
       ...formData,
       questions: updatedQuestions,
@@ -338,6 +348,7 @@ export default function AddQuiz() {
             handleAddOption={handleAddOption}
             errors={errors}
             edit={edit}
+            handleDeleteOption={handleDeleteOption}
             handleEditSubmit={handleEditSubmit}
             id={id}
           />

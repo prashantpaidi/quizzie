@@ -1,6 +1,6 @@
 import styles from './AddQuiz.module.css';
 import PropTypes from 'prop-types';
-
+import DeleteIcon from '../../assets/deleteIcon.svg';
 const AddQuestions = ({
   formData,
   currentPage,
@@ -14,6 +14,7 @@ const AddQuestions = ({
   errors,
   edit,
   handleEditSubmit,
+  handleDeleteOption,
 }) => {
   return (
     <>
@@ -149,7 +150,12 @@ const AddQuestions = ({
                           handleChange(e, currentPage, optionIndex)
                         }
                         placeholder='Text'
-                        className={styles.optionInput}
+                        className={`${styles.optionInput} ${
+                          formData.questions[currentPage]?.correctOptionId ===
+                          optionIndex
+                            ? styles.activeInput
+                            : ''
+                        }`}
                         style={{
                           width:
                             formData.optionType === 'Text & Image URL'
@@ -170,7 +176,12 @@ const AddQuestions = ({
                           handleChange(e, currentPage, optionIndex)
                         }
                         placeholder='Image URL'
-                        className={styles.optionInput}
+                        className={`${styles.optionInput} ${
+                          formData.questions[currentPage]?.correctOptionId ===
+                          optionIndex
+                            ? styles.activeInput
+                            : ''
+                        }`}
                         style={{
                           width:
                             formData.optionType === 'Text & Image URL'
@@ -179,6 +190,14 @@ const AddQuestions = ({
                         }}
                       />
                     </>
+                  )}
+                  {optionIndex > 1 && (
+                    <img
+                      src={DeleteIcon}
+                      onClick={() =>
+                        handleDeleteOption(currentPage, optionIndex)
+                      }
+                    />
                   )}
                 </div>
               )
@@ -309,5 +328,6 @@ AddQuestions.propTypes = {
   }).isRequired,
   edit: PropTypes.bool.isRequired,
   handleEditSubmit: PropTypes.func.isRequired,
+  handleDeleteOption: PropTypes.func.isRequired,
 };
 export default AddQuestions;

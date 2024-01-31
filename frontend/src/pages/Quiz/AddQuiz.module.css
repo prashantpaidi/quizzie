@@ -55,7 +55,6 @@
   font-weight: 500;
 }
 .quizButton {
-  /* CSS properties */
   border-radius: 10px;
   background: #fff;
 
@@ -84,20 +83,16 @@
   color: #fff;
 }
 .questionContainer {
-  /* CSS properties */
   width: 70%;
 }
 
 .questionTitle {
-  /* CSS properties */
 }
 
 .questionLabel {
-  /* CSS properties */
 }
 
 .questionInput {
-  /* CSS properties */
   border-radius: 10px;
   background: #fff;
   padding: 10px;
@@ -106,11 +101,9 @@
 }
 
 .optionContainer {
-  /* CSS properties */
 }
 
 .optionLabel {
-  /* CSS properties */
 }
 
 .optionInput {
