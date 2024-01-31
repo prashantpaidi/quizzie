@@ -71,7 +71,7 @@ export default function AddQuiz() {
         } catch (error) {
           console.error(error);
           console.log('404');
-          alert('Quiz not found');
+          alert('Quiz not found');  
         }
       };
       getQuiz();
