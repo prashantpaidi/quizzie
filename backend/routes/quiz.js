@@ -101,7 +101,6 @@ router.post('/', isLoggedIn, async (req, res) => {
 
       if (quizType === 'Poll Type') {
         correctOptionObjectId = null;
-        timer = 'OFF';
       }
       // Create a new question with the options array
       const question = new Question({
@@ -122,7 +121,7 @@ router.post('/', isLoggedIn, async (req, res) => {
       title,
       questions: newQuestions,
       quizType,
-      timer,
+      timer: quizType === 'Poll Type' ? 'OFF' : timer,
       optionType,
       creatorId,
     });
