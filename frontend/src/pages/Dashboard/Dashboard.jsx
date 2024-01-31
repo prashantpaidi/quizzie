@@ -15,7 +15,7 @@ export default function Dashboard() {
     const token = localStorage.getItem('token');
 
     if (!userId || !token) {
-      navigate('/auth/login');
+      navigate('/auth/register');
     }
     const getQuiz = async () => {
       try {
