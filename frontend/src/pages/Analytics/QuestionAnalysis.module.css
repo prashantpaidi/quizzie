@@ -9,8 +9,14 @@
   justify-content: space-around;
 }
 .heading {
+  color: #5076ff;
+  font-size: 40px;
+  font-weight: 600;
 }
 .quiz_data {
+  color: #ff5d01;
+  font-size: 15px;
+  font-weight: 600;
 }
 .quizConainer {
   display: flex;
