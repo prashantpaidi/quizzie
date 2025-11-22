@@ -2,13 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+dotenv.config();
+
 const cors = require('cors');
 const app = express();
 
 const authRoutes = require('./routes/auth');
 const quizRoutes = require('./routes/quiz'); // Import the quiz routes
 
-dotenv.config();
+
 app.use(
   cors({
     origin: '*',
@@ -51,11 +53,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  mongoose
-    .connect(process.env.MONGODB_URL)
-    .then(() =>
-      console.log(`Server running on http://localhost:${process.env.PORT}`)
-    )
-    .catch((error) => console.error(error));
-});
+const connectDB = require('./config/db');
+
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`Server running on http://localhost:${process.env.PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to connect to the database', error);
+    process.exit(1);
+  }
+};
+
+startServer();
+
