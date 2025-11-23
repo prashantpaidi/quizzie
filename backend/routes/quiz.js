@@ -422,5 +422,9 @@ router.get('/analytics/:quizId', isLoggedIn, async (req, res) => {
   }
 });
 
+const { generateQuestions } = require('../controllers/geminiController');
+
+router.post('/generate-questions', isLoggedIn, generateQuestions);
+
 // exports
 module.exports = router;

@@ -1,3 +1,4 @@
+
 import styles from './AddQuiz.module.css';
 import PropTypes from 'prop-types';
 import DeleteIcon from '../../assets/deleteIcon.svg';
@@ -15,6 +16,7 @@ const AddQuestions = ({
   edit,
   handleEditSubmit,
   handleDeleteOption,
+  setQuestions,
 }) => {
   return (
     <>
@@ -298,6 +300,7 @@ const AddQuestions = ({
 
 AddQuestions.propTypes = {
   formData: PropTypes.shape({
+    title: PropTypes.string.isRequired,
     questions: PropTypes.arrayOf(
       PropTypes.shape({
         text: PropTypes.string.isRequired,
@@ -329,5 +332,6 @@ AddQuestions.propTypes = {
   edit: PropTypes.bool.isRequired,
   handleEditSubmit: PropTypes.func.isRequired,
   handleDeleteOption: PropTypes.func.isRequired,
+  setQuestions: PropTypes.func.isRequired,
 };
 export default AddQuestions;

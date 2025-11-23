@@ -1,6 +1,6 @@
-// QuizTitleAndType.js
 import styles from './QuizTitleAndType.module.css';
 import PropTypes from 'prop-types';
+import AiQuestionGenerator from './AiQuestionGenerator';
 
 const QuizTitleAndType = ({
   formData,
@@ -8,6 +8,7 @@ const QuizTitleAndType = ({
   handleAddQuestion,
   navigateBack,
   errors,
+  setQuestions,
 }) => {
   return (
     <>
@@ -57,13 +58,21 @@ const QuizTitleAndType = ({
         >
           Cancel
         </button>
-        <button
-          key='MoveToQuestionPage'
-          onClick={() => handleAddQuestion()}
-          className={`${styles.quizButton} ${styles.mainButton} ${styles.mainButtonActive}`}
-        >
-          Continue
-        </button>
+        <div className={styles.flex}>
+          <button
+            key='MoveToQuestionPage'
+            onClick={() => handleAddQuestion()}
+            className={`${styles.quizButton} ${styles.mainButton} ${styles.mainButtonActive}`}
+          >
+            Continue
+          </button>
+          <AiQuestionGenerator
+            setQuestions={setQuestions}
+            title={formData.title}
+            quizType={formData.quizType}
+            handleAddQuestion={handleAddQuestion}
+          />
+        </div>
       </div>
     </>
   );
@@ -81,5 +90,6 @@ QuizTitleAndType.propTypes = {
     quizType: PropTypes.string,
     title: PropTypes.string,
   }).isRequired,
+  setQuestions: PropTypes.func.isRequired,
 };
 export default QuizTitleAndType;

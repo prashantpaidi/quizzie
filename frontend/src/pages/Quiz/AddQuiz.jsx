@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './AddQuiz.module.css'; // Import the module style class
 import { useLocation, useNavigate } from 'react-router-dom';
 import QuizTitleAndType from '../../component/Quiz/QuizTitleAndType';
+import AiQuestionGenerator from '../../component/Quiz/AiQuestionGenerator';
 import AddQuestions from '../../component/Quiz/AddQuestions';
 
 export default function AddQuiz() {
@@ -29,6 +30,14 @@ export default function AddQuiz() {
     optionType: 'Text',
     creatorId: '',
   });
+
+  const setQuestions = (newQuestions) => {
+    setFormData({
+      ...formData,
+      questions: newQuestions,
+    });
+  };
+
 
   // login
   useEffect(() => {
@@ -334,9 +343,10 @@ export default function AddQuiz() {
             handleAddQuestion={handleGotoAddQuestion}
             navigateBack={() => navigate(-1)}
             errors={errors}
+            setQuestions={setQuestions}
           />
         ) : (
-          <AddQuestions
+                    <AddQuestions
             formData={formData}
             currentPage={currentPage}
             handleChange={handleChange}
@@ -351,6 +361,7 @@ export default function AddQuiz() {
             handleDeleteOption={handleDeleteOption}
             handleEditSubmit={handleEditSubmit}
             id={id}
+            setQuestions={setQuestions}
           />
         )}
       </div>
