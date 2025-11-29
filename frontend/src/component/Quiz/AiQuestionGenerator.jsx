@@ -42,11 +42,11 @@ const AiQuestionGenerator = ({
     <div className={styles.aiGenerator}>
       <button
         type="button"
-        className={styles.aiButton}
+        className={`${styles.aiButton} ${styles.quizButton} ${styles.mainButton} ${styles.mainButtonActive}`}
         onClick={handleGenerateQuestions}
         disabled={isLoading || !title}
       >
-        {isLoading ? 'Generating...' : 'Generate with AI'}
+        {isLoading ? 'Generating...' : 'Generate with AI 🤖'}
       </button>
     </div>
   );

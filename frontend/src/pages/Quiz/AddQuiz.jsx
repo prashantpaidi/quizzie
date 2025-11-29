@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './AddQuiz.module.css'; // Import the module style class
 import { useLocation, useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import QuizTitleAndType from '../../component/Quiz/QuizTitleAndType';
 import AiQuestionGenerator from '../../component/Quiz/AiQuestionGenerator';
 import AddQuestions from '../../component/Quiz/AddQuestions';
@@ -287,17 +288,17 @@ export default function AddQuiz() {
         }
       );
 
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         console.log('Quiz added successfully:', data);
         navigate('/show-quiz-link', { state: { data: data } });
       } else {
         console.error('Failed to add quiz:', response.statusText);
-        alert('Failed to add quiz');
+        toast.error(data.error);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to add quiz');
+      toast.error('Failed to add quiz');
     }
   };
 
@@ -316,25 +317,26 @@ export default function AddQuiz() {
         }
       );
 
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         if (data.error) {
-          alert(data.error);
+          toast.error(data.error);
         }
         console.log('Quiz edited successfully:', data);
         navigate('/');
       } else {
         console.error('Failed to edit quiz:', response.statusText);
-        alert('Failed to edit quiz');
+        toast.error(data.error);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to edit quiz');
+      toast.error('Failed to edit quiz');
     }
   };
 
   return (
     <div className={styles.backGround}>
+      <Toaster />
       <div className={styles.quizContainer}>
         {currentPage === -1 ? (
           <QuizTitleAndType

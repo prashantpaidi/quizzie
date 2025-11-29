@@ -51,6 +51,7 @@ const QuizTitleAndType = ({
       </div>
       {errors.quizType && <p className={styles.error}>{errors.quizType}</p>}
       <div className={styles.inputContainer}>
+        <div className={styles.flex}>
         <button
           key='Cancel'
           onClick={() => navigateBack()}
@@ -58,7 +59,6 @@ const QuizTitleAndType = ({
         >
           Cancel
         </button>
-        <div className={styles.flex}>
           <button
             key='MoveToQuestionPage'
             onClick={() => handleAddQuestion()}
