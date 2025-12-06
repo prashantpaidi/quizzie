@@ -32,6 +32,68 @@
   margin: 1rem 0rem;
 }
 
+.subLabel {
+  width: 70%;
+  color: #6b6b6b;
+  font-family: Poppins;
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.cardGrid {
+  display: flex;
+  gap: 18px;
+  width: 70%;
+  margin-bottom: 12px;
+}
+
+.card {
+  flex: 1 1 0;
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  border: 2px solid #ffffff;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.cardActive {
+  border: 2px solid #60b84b;
+  box-shadow: 0px 10px 24px rgba(96,184,75,0.12);
+}
+
+.cardIcon {
+  font-size: 28px;
+}
+
+.cardTitle {
+  font-weight: 700;
+  font-size: 18px;
+  color: #333;
+}
+
+.cardSub {
+  color: #7a7a7a;
+  font-size: 14px;
+}
+
+.aiButtonWrap {
+  margin-top: 8px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .quizLabel {
   color: #9f9f9f;
   text-align: center;
@@ -66,8 +128,8 @@
   border: none;
   padding: 10px 30px;
 
-  font-family: Poppins;
-  font-size: 20 px;
+  font-family: Poppins, sans-serif;
+  font-size: 20px;
   font-style: normal;
   font-weight: 600;
 
@@ -80,7 +142,7 @@
   color: #fff;
 }
 .mainButton {
-  padding: 5x 50px;
+  padding: 5px 50px;
 }
 .mainButtonActive {
   background: #60b84b;
@@ -88,12 +150,6 @@
 }
 .questionContainer {
   width: 70%;
-}
-
-.questionTitle {
-}
-
-.questionLabel {
 }
 
 .questionInput {
@@ -105,9 +161,11 @@
 }
 
 .optionContainer {
+  display: block;
 }
 
 .optionLabel {
+  display: block;
 }
 
 .optionInput {

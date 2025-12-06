@@ -46,7 +46,7 @@ const AiQuestionGenerator = ({
         onClick={handleGenerateQuestions}
         disabled={isLoading || !title}
       >
-        {isLoading ? 'Generating...' : 'Generate with AI 🤖'}
+        {isLoading ? 'Generating...' : 'AI Generate Questions ✨'}
       </button>
     </div>
   );
