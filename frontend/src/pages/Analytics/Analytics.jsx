@@ -14,6 +14,7 @@ export default function Analytics() {
   // delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [quizToDelete, setQuizToDelete] = useState(null);
+  console.log("Rendered:", 'Analytics');
 
   useEffect(() => {
     // get user id from local storage if no user id then redirect to login page
@@ -24,6 +25,7 @@ export default function Analytics() {
       navigate('/auth/login');
     }
     const getQuiz = async () => {
+
       try {
         const response = await fetch(
           `${import.meta.env.VITE_APP_API_URL}/quizzes/user/${userId}`,
@@ -140,8 +142,8 @@ export default function Analytics() {
                 <td>
                   {quiz.impressionCount >= 1000
                     ? `${(Math.floor(quiz.impressionCount / 100) / 10).toFixed(
-                        1
-                      )}k`
+                      1
+                    )}k`
                     : quiz.impressionCount}
                 </td>
                 <td>
@@ -160,9 +162,8 @@ export default function Analytics() {
                 </td>
                 <td>
                   <Link
-                    to={`${import.meta.env.VITE_APP_WEB_URL}/quiz/analytics/${
-                      quiz._id
-                    }`}
+                    to={`${import.meta.env.VITE_APP_WEB_URL}/quiz/analytics/${quiz._id
+                      }`}
                   >
                     Question Wise Analysis
                   </Link>
