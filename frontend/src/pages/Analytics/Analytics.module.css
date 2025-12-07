@@ -64,3 +64,35 @@ img {
   margin: 0 5px;
   cursor: pointer;
 }
+
+.loadingContainer,
+.errorContainer,
+.emptyContainer {
+  text-align: center;
+  padding: 60px 20px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingContainer p {
+  color: #5076ff;
+  font-family: Poppins;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.errorContainer p {
+  color: #ff5050;
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.emptyContainer p {
+  color: #888;
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: 400;
+}

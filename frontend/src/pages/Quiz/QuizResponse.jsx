@@ -11,28 +11,36 @@ export default function QuizResponse() {
   const [quiz, setQuiz] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(10);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // user selected answer
   const [userAnswer, setUserAnswer] = useState({});
   useEffect(() => {
     const getQuiz = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         const response = await fetch(
           `${import.meta.env.VITE_APP_API_URL}/quizzes/${quizId}`
         );
         const data = await response.json();
-        setQuiz(data);
-        console.log('Quiz:data', data);
-        console.log('Quiz:quiz', quiz);
+
         if (data.error) {
-          navigate('/404');
+          setError(data.error);
+          setTimeout(() => navigate('/404'), 2000);
+        } else {
+          setQuiz(data);
+          console.log('Quiz:data', data);
+          console.log('Quiz:quiz', quiz);
         }
-        // setTimer();
-        // setTimeRemaining(data);
       } catch (error) {
         console.error(error);
-        console.log('404');
-        navigate('/404');
+        setError('Quiz not found');
+        setTimeout(() => navigate('/404'), 2000);
+      } finally {
+        setLoading(false);
       }
     };
     getQuiz();
@@ -99,7 +107,7 @@ export default function QuizResponse() {
       quiz?.questions &&
       quiz.questions[currentQuestionIndex] &&
       userAnswer[quiz.questions[currentQuestionIndex]._id] ===
-        quiz.questions[currentQuestionIndex].correctOptionId
+      quiz.questions[currentQuestionIndex].correctOptionId
     ) {
       setScore(score + 1);
     }
@@ -144,93 +152,102 @@ export default function QuizResponse() {
 
   return (
     <div className={styles.backGround}>
-      <div className={styles.quizContainer}>
-        {/* question count */}
-        <div className={styles.questionTimerContainer}>
-          <div className={styles.questionCount}>
-            <span>
-              0{currentQuestionIndex + 1}/
-              {`0${quiz?.questions && quiz?.questions.length}`}
-            </span>
-          </div>
-          {quiz.timer !== 'OFF' && (
-            <div className={styles.timer}>
-              <span>00:0{timeRemaining}s</span>
-            </div>
-          )}
+      {loading ? (
+        <div className={styles.loadingContainer}>
+          <p>Loading quiz...</p>
         </div>
-        <div className={styles.questionOptionContainer}>
-          {quiz?.questions && quiz.questions[currentQuestionIndex] && (
-            <div>
-              <h2 className={styles.title}>
-                {quiz.questions[currentQuestionIndex].text}
-              </h2>
+      ) : error ? (
+        <div className={styles.errorContainer}>
+          <p>{error}</p>
+          <p>Redirecting...</p>
+        </div>
+      ) : (
+        <div className={styles.quizContainer}>
+          {/* question count */}
+          <div className={styles.questionTimerContainer}>
+            <div className={styles.questionCount}>
+              <span>
+                0{currentQuestionIndex + 1}/
+                {`0${quiz?.questions && quiz?.questions.length}`}
+              </span>
             </div>
-          )}
+            {quiz.timer !== 'OFF' && (
+              <div className={styles.timer}>
+                <span>00:0{timeRemaining}s</span>
+              </div>
+            )}
+          </div>
+          <div className={styles.questionOptionContainer}>
+            {quiz?.questions && quiz.questions[currentQuestionIndex] && (
+              <div>
+                <h2 className={styles.title}>
+                  {quiz.questions[currentQuestionIndex].text}
+                </h2>
+              </div>
+            )}
 
-          <div className={styles.optionContainer}>
-            {quiz?.questions &&
-              quiz.questions[currentQuestionIndex] &&
-              quiz.questions[currentQuestionIndex].options &&
-              quiz.questions[currentQuestionIndex].options.map(
-                (option, index) => (
-                  <div key={index} style={{ display: 'contents' }}>
-                    {quiz.optionType === 'Text' ||
-                    quiz.optionType === 'Text & Image URL' ? (
-                      <button
-                        key={index}
-                        onClick={() => handleOptionClick(option)}
-                        className={`${styles.optionText} ${
-                          userAnswer[
-                            quiz.questions[currentQuestionIndex]._id
-                          ] === option._id
-                            ? styles.activeOption
-                            : ''
-                        }`}
-                      >
-                        <span
-                          style={{
-                            textAlign:
-                              quiz.optionType === 'Text & Image URL'
-                                ? 'left'
-                                : 'inherit',
-                          }}
+            <div className={styles.optionContainer}>
+              {quiz?.questions &&
+                quiz.questions[currentQuestionIndex] &&
+                quiz.questions[currentQuestionIndex].options &&
+                quiz.questions[currentQuestionIndex].options.map(
+                  (option, index) => (
+                    <div key={index} style={{ display: 'contents' }}>
+                      {quiz.optionType === 'Text' ||
+                        quiz.optionType === 'Text & Image URL' ? (
+                        <button
+                          key={index}
+                          onClick={() => handleOptionClick(option)}
+                          className={`${styles.optionText} ${userAnswer[
+                              quiz.questions[currentQuestionIndex]._id
+                            ] === option._id
+                              ? styles.activeOption
+                              : ''
+                            }`}
                         >
-                          {option.text}
-                        </span>
+                          <span
+                            style={{
+                              textAlign:
+                                quiz.optionType === 'Text & Image URL'
+                                  ? 'left'
+                                  : 'inherit',
+                            }}
+                          >
+                            {option.text}
+                          </span>
 
-                        {quiz.optionType === 'Text & Image URL' && (
-                          <img
-                            className={styles.optionImageWithText}
-                            src={option.image}
-                            alt='Option Image'
-                          />
-                        )}
-                      </button>
-                    ) : (
-                      <img
-                        key={index}
-                        onClick={() => handleOptionClick(option)}
-                        className={`${styles.optionOnlyImage} ${
-                          userAnswer[
-                            quiz.questions[currentQuestionIndex]._id
-                          ] === option._id
-                            ? styles.activeOptionOnlyImage
-                            : ''
-                        }`}
-                        src={option.image}
-                        alt='Option Image'
-                      />
-                    )}
-                  </div>
-                )
-              )}
+                          {quiz.optionType === 'Text & Image URL' && (
+                            <img
+                              className={styles.optionImageWithText}
+                              src={option.image}
+                              alt='Option Image'
+                            />
+                          )}
+                        </button>
+                      ) : (
+                        <img
+                          key={index}
+                          onClick={() => handleOptionClick(option)}
+                          className={`${styles.optionOnlyImage} ${userAnswer[
+                              quiz.questions[currentQuestionIndex]._id
+                            ] === option._id
+                              ? styles.activeOptionOnlyImage
+                              : ''
+                            }`}
+                          src={option.image}
+                          alt='Option Image'
+                        />
+                      )}
+                    </div>
+                  )
+                )}
+            </div>
           </div>
+          <button onClick={handleNextClick} className={styles.nextButton}>
+            {buttonText}
+          </button>
         </div>
-        <button onClick={handleNextClick} className={styles.nextButton}>
-          {buttonText}
-        </button>
-      </div>
+      )}
     </div>
   );
 }
