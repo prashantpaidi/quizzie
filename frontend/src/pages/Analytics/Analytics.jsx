@@ -11,6 +11,8 @@ import DeleteModal from '../../component/Quiz/DeleteModal';
 export default function Analytics() {
   const navigate = useNavigate();
   const [quizData, setQuizData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   // delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [quizToDelete, setQuizToDelete] = useState(null);
@@ -25,6 +27,8 @@ export default function Analytics() {
       navigate('/auth/login');
     }
     const getQuiz = async () => {
+      setLoading(true);
+      setError(null);
 
       try {
         const response = await fetch(
@@ -36,17 +40,21 @@ export default function Analytics() {
           }
         );
         const data = await response.json();
-        setQuizData(data.quizzes);
-        console.log('Quiz:data', data);
-        console.log('Quiz:quiz', quizData);
 
         if (data.error) {
-          alert('Something went wrong');
+          setError(data.error);
+          toast.error(data.error);
+        } else {
+          setQuizData(data.quizzes || []);
+          console.log('Quiz:data', data);
+          console.log('Quiz:quiz', quizData);
         }
       } catch (error) {
         console.error(error);
-        console.log('404');
-        alert('Something went wrong');
+        setError('Failed to load quizzes. Please try again.');
+        toast.error('Failed to load quizzes');
+      } finally {
+        setLoading(false);
       }
     };
     getQuiz();
@@ -115,63 +123,78 @@ export default function Analytics() {
     <div className={styles.analyticsTableContainer}>
       <div className={styles.analyticsTableWrapper}>
         <h1 className={styles.analyticsTitle}>Quiz Analytics</h1>
-        <table className={styles.analyticsTable}>
-          <thead>
-            <tr>
-              <th>Sr.No.</th>
-              <th>Quiz Name</th>
-              <th>Created on</th>
-              <th>Impression</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {quizData.map((quiz, index) => (
-              <tr key={quiz._id}>
-                <td>{index + 1}</td>
-                <td>{quiz.title}</td>
-                <td>
-                  {new Date(quiz.created_at).getDate()}{' '}
-                  {new Date(quiz.created_at).toLocaleString('en-US', {
-                    month: 'short',
-                  })}
-                  {', '}
-                  {new Date(quiz.created_at).getFullYear().toString().slice(-2)}
-                </td>
-                <td>
-                  {quiz.impressionCount >= 1000
-                    ? `${(Math.floor(quiz.impressionCount / 100) / 10).toFixed(
-                      1
-                    )}k`
-                    : quiz.impressionCount}
-                </td>
-                <td>
-                  <img
-                    src={editIcon}
-                    onClick={() => handleEditClick(quiz._id)}
-                  />
-                  <img
-                    src={deleteIcon}
-                    onClick={() => handleDeleteClick(quiz._id)}
-                  />
-                  <img
-                    src={shareIcon}
-                    onClick={() => handleShareClick(quiz._id)}
-                  />
-                </td>
-                <td>
-                  <Link
-                    to={`${import.meta.env.VITE_APP_WEB_URL}/quiz/analytics/${quiz._id
-                      }`}
-                  >
-                    Question Wise Analysis
-                  </Link>
-                </td>
+
+        {loading ? (
+          <div className={styles.loadingContainer}>
+            <p>Loading quizzes...</p>
+          </div>
+        ) : error ? (
+          <div className={styles.errorContainer}>
+            <p>{error}</p>
+          </div>
+        ) : quizData.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <p>No quizzes found. Create your first quiz to get started!</p>
+          </div>
+        ) : (
+          <table className={styles.analyticsTable}>
+            <thead>
+              <tr>
+                <th>Sr.No.</th>
+                <th>Quiz Name</th>
+                <th>Created on</th>
+                <th>Impression</th>
+                <th></th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {quizData.map((quiz, index) => (
+                <tr key={quiz._id}>
+                  <td>{index + 1}</td>
+                  <td>{quiz.title}</td>
+                  <td>
+                    {new Date(quiz.created_at).getDate()}{' '}
+                    {new Date(quiz.created_at).toLocaleString('en-US', {
+                      month: 'short',
+                    })}
+                    {', '}
+                    {new Date(quiz.created_at).getFullYear().toString().slice(-2)}
+                  </td>
+                  <td>
+                    {quiz.impressionCount >= 1000
+                      ? `${(Math.floor(quiz.impressionCount / 100) / 10).toFixed(
+                        1
+                      )}k`
+                      : quiz.impressionCount}
+                  </td>
+                  <td>
+                    <img
+                      src={editIcon}
+                      onClick={() => handleEditClick(quiz._id)}
+                    />
+                    <img
+                      src={deleteIcon}
+                      onClick={() => handleDeleteClick(quiz._id)}
+                    />
+                    <img
+                      src={shareIcon}
+                      onClick={() => handleShareClick(quiz._id)}
+                    />
+                  </td>
+                  <td>
+                    <Link
+                      to={`${import.meta.env.VITE_APP_WEB_URL}/quiz/analytics/${quiz._id
+                        }`}
+                    >
+                      Question Wise Analysis
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
       {showDeleteModal ? (
         <DeleteModal
