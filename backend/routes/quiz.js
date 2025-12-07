@@ -158,13 +158,20 @@ router.get('/user/:id', isLoggedIn, async (req, res) => {
 
     console.log('User Quizzes:', userQuizzes);
 
-    // Calculate the count of all questions
-    let questionCount = 0;
-    let totalImpressions = 0;
-    userQuizzes.forEach((quiz) => {
-      questionCount += quiz.questions.length;
-      totalImpressions += quiz.impressionCount;
-    });
+    // Use MongoDB Aggregation to calculate totals efficiently
+    const stats = await Quiz.aggregate([
+      { $match: { creatorId: new mongoose.Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: null,
+          totalImpressions: { $sum: '$impressionCount' },
+          totalQuestions: { $sum: { $size: '$questions' } },
+        },
+      },
+    ]);
+
+    const questionCount = stats.length > 0 ? stats[0].totalQuestions : 0;
+    const totalImpressions = stats.length > 0 ? stats[0].totalImpressions : 0;
 
     console.log('Question Count:', questionCount);
     console.log('Total Impressions:', totalImpressions);
@@ -291,15 +298,15 @@ router.put('/:quizId', isLoggedIn, async (req, res) => {
       // save question
       const question = _id
         ? await Question.findByIdAndUpdate(_id, {
-            text,
-            options: newOptions,
-            correctOptionId: correctOptionObjectId,
-          }).exec()
+          text,
+          options: newOptions,
+          correctOptionId: correctOptionObjectId,
+        }).exec()
         : new Question({
-            text,
-            options: newOptions,
-            correctOptionId: correctOptionObjectId,
-          });
+          text,
+          options: newOptions,
+          correctOptionId: correctOptionObjectId,
+        });
 
       await question.save();
 
@@ -336,76 +343,136 @@ router.get('/analytics/:quizId', isLoggedIn, async (req, res) => {
     const quizId = req.params.quizId;
 
     // Retrieve the quiz from the database
-    const quiz = await Quiz.findById(quizId).populate('questions');
+    const quiz = await Quiz.findById(quizId).populate({
+      path: 'questions',
+      populate: { path: 'options' },
+    });
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
 
-    const userResponses = await UserResponse.find({ quizId });
-
-    // Perform analytics calculations
     let questionsAnalytics = [];
 
-    quiz.questions.forEach((question) => {
-      if (quiz.quizType === 'Q & A') {
-        const correctOptionId = question.correctOptionId.toString();
-        const questionId = question._id;
+    if (quiz.quizType === 'Q & A') {
+      // Use MongoDB Aggregation for Q&A type quizzes
+      const analyticsResults = await UserResponse.aggregate([
+        // Match responses for this quiz
+        { $match: { quizId: new mongoose.Types.ObjectId(quizId) } },
 
-        // Calculate the number of correct responses
+        // Unwind the answers array to process each answer
+        { $unwind: '$answers' },
+
+        // Group by questionId and selectedOptionId to count responses
+        {
+          $group: {
+            _id: {
+              questionId: '$answers.questionId',
+              selectedOptionId: '$answers.selectedOptionId',
+            },
+            count: { $sum: 1 },
+          },
+        },
+
+        // Group by questionId to get all options for each question
+        {
+          $group: {
+            _id: '$_id.questionId',
+            options: {
+              $push: {
+                optionId: '$_id.selectedOptionId',
+                count: '$count',
+              },
+            },
+          },
+        },
+      ]);
+
+      // Create a map for quick lookup
+      const analyticsMap = new Map();
+      analyticsResults.forEach((result) => {
+        analyticsMap.set(result._id.toString(), result.options);
+      });
+
+      // Process each question
+      quiz.questions.forEach((question) => {
+        const questionId = question._id.toString();
+        const correctOptionId = question.correctOptionId.toString();
+        const optionCounts = analyticsMap.get(questionId) || [];
+
         let totalRight = 0;
         let totalWrong = 0;
-        userResponses.forEach((userResponse) => {
-          userResponse.answers.forEach((answer) => {
-            if (answer.questionId.toString() === questionId.toString()) {
-              if (answer.selectedOptionId.toString() === correctOptionId) {
-                totalRight += 1;
-              } else {
-                totalWrong += 1;
-              }
-            }
-          });
+
+        optionCounts.forEach((option) => {
+          if (option.optionId.toString() === correctOptionId) {
+            totalRight = option.count;
+          } else {
+            totalWrong += option.count;
+          }
         });
 
-        // Store question-wise analytics
         questionsAnalytics.push({
-          questionId: questionId,
+          questionId: question._id,
           text: question.text,
           totalRight: totalRight,
           totalWrong: totalWrong,
           totalResponses: totalRight + totalWrong,
         });
-      } else {
-        // Calculate the number of responses for each option
+      });
+    } else {
+      // Use MongoDB Aggregation for Poll type quizzes
+      const analyticsResults = await UserResponse.aggregate([
+        // Match responses for this quiz
+        { $match: { quizId: new mongoose.Types.ObjectId(quizId) } },
 
-        let optionAnalytics = [];
-        question.options.forEach((option) => {
+        // Unwind the answers array
+        { $unwind: '$answers' },
+
+        // Group by questionId and selectedOptionId
+        {
+          $group: {
+            _id: {
+              questionId: '$answers.questionId',
+              selectedOptionId: '$answers.selectedOptionId',
+            },
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+
+      // Create a map for quick lookup
+      const analyticsMap = new Map();
+      analyticsResults.forEach((result) => {
+        const questionId = result._id.questionId.toString();
+        const optionId = result._id.selectedOptionId.toString();
+
+        if (!analyticsMap.has(questionId)) {
+          analyticsMap.set(questionId, new Map());
+        }
+        analyticsMap.get(questionId).set(optionId, result.count);
+      });
+
+      // Process each question
+      quiz.questions.forEach((question) => {
+        const questionId = question._id.toString();
+        const optionCounts = analyticsMap.get(questionId) || new Map();
+
+        const optionAnalytics = question.options.map((option) => {
           const optionId = option._id.toString();
-          let totalResponses = 0;
-          userResponses.forEach((userResponse) => {
-            userResponse.answers.forEach((answer) => {
-              if (answer.questionId.toString() === question._id.toString()) {
-                if (answer.selectedOptionId.toString() === optionId) {
-                  totalResponses += 1;
-                }
-              }
-            });
-          });
-          optionAnalytics.push({
-            optionId: optionId,
+          return {
+            optionId: option._id,
             text: option.text,
             image: option.image,
-            totalResponses: totalResponses,
-          });
+            totalResponses: optionCounts.get(optionId) || 0,
+          };
         });
 
-        // Store question-wise analytics
         questionsAnalytics.push({
           questionId: question._id,
           text: question.text,
           options: optionAnalytics,
         });
-      }
-    });
+      });
+    }
 
     res.status(200).json({
       analytics: {

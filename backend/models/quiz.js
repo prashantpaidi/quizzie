@@ -21,6 +21,7 @@ const quizSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+    index: true
   },
   quizType: {
     type: String,
@@ -45,7 +46,7 @@ const quizSchema = new mongoose.Schema({
 const Quiz = mongoose.model('Quiz', quizSchema);
 
 const userResponseSchema = new mongoose.Schema({
-  quizId: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true },
+  quizId: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true, index: true },
   answers: [
     {
       questionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },
